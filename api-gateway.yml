@@ -1,19 +1,31 @@
 server:
-  port: 8081
+  port: 8080
 
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/apigatewaydb
-    username: postgres
-    password: 123456
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-
-jwt:
-  secret: ${JWT_SECRET:189EU8HF9812H1F10H180HF019FH0192HF0182E0128EH12HE01}
-  expiration: 3600000
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+        - id: property-service
+          uri: lb://property-service
+          predicates:
+            - Path=/api/properties/**
+        - id: availability-service
+          uri: lb://availability-service
+          predicates:
+            - Path=/api/availability/**
+        - id: booking-service
+          uri: lb://booking-service
+          predicates:
+            - Path=/api/bookings/**
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payments/**
